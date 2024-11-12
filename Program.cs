@@ -18,25 +18,34 @@ class Program
             words = text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        // Группируем элементы по словам
         var res = words.GroupBy(x => x)
-            // Из 156 тысяч слов текста не рассматриваем упоминающиеся менее 100 раз
-            .Where(x => x.Count() > 1) 
-                .Select(x => new { Word = x.Key, Frequency = x.Count() });
+            .Where(x => x.Count() > 100)    // Рассматриваем слова, упоминающиеся более 100 раз
+            .Select(x => new { Word = x.Key, Frequency = x.Count() });
 
         foreach (var item in res)
         {
-            if (item.Frequency > 1)
+            if (item.Frequency > 100)
             {
                 dictionary.Add(item.Word, item.Frequency);
             }
         }
 
-        var numWords = dictionary.OrderByDescending(n => n.Value).Take(10);
+        Console.WriteLine("10 слов, встречающихся в тексте чаще всего:\n");
+
+        var numberWords = dictionary.OrderByDescending(n => n.Value).Take(10);
         int i = 1;
-        foreach (var item in numWords)
+        foreach (var item in numberWords)
         {
-            Console.WriteLine($"{i}.Слово \"{item.Key}\" \tвстречается в тексте {item.Value} раз");
+            var digit = Convert.ToString(item.Value);
+            var lastDigit = digit.Substring(digit.Length - 1);
+            if (lastDigit == "2" || lastDigit == "3" || lastDigit == "4")
+            {
+                Console.WriteLine($"{i}.Слово\"{item.Key}\" \t - {item.Value} раза;");
+            }
+            else
+            {
+                Console.WriteLine($"{i}.Слово\"{item.Key}\" \t - {item.Value} раз;");
+            }
             i++;
         }
     }
